@@ -1,0 +1,7 @@
+ba1996733b78c7446310e4955d147d2c3549e801 assets/rainshield/blockstates/rain_shield.json
+5c5d2822c029b2d30ee17119424ce7e1e54d8a94 assets/rainshield/lang/en_us.json
+f942aacd2d57246237e4b78ffc0a3bedb9c764f6 assets/rainshield/models/block/rain_shield.json
+95aeffc6df5dde27c246e0994340532167112eac assets/rainshield/models/item/rain_shield.json
+d805a9c9e8b8ceb9bf59216a1fac7545087796bd data/rainshield/advancements/recipes/misc/rain_shield.json
+659ee0791a0cf3c9a324dd28fef5289c2bbdd4e0 data/rainshield/loot_tables/blocks/rain_shield.json
+83ee89a63c25d528bf311ee73d176ee91434b098 data/rainshield/recipes/rain_shield.json

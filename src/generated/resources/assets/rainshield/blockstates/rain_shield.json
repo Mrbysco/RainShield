@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "rainshield:block/rain_shield",
+      "x": 180
+    },
+    "facing=up": {
+      "model": "rainshield:block/rain_shield"
+    },
+    "facing=north": {
+      "model": "rainshield:block/rain_shield",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "rainshield:block/rain_shield",
+      "x": 90,
+      "y": 180
+    },
+    "facing=west": {
+      "model": "rainshield:block/rain_shield",
+      "x": 90,
+      "y": 270
+    },
+    "facing=east": {
+      "model": "rainshield:block/rain_shield",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

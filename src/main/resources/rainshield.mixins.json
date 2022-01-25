@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "compatibilityLevel": "JAVA_17",
+  "package": "com.mrbysco.rainshield.mixin",
+  "refmap": "rainshield.refmap.json",
+  "target": "@env(DEFAULT)",
+  "client": [
+	"LevelRendererMixin"
+  ],
+  "injectors": {
+	"defaultRequire": 1
+  }
+}

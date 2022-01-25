@@ -1,0 +1,7 @@
+{
+  "parent": "rainshield:block/rod",
+  "textures": {
+    "particle": "rainshield:block/rain_shield",
+    "rod": "rainshield:block/rain_shield"
+  }
+}
