@@ -27,8 +27,7 @@ public class RainShieldData extends SavedData {
 	public static Map<ResourceLocation, List<BlockPos>> rainShieldMap = new HashMap<>();
 
 	public RainShieldData(Map<ResourceLocation, List<BlockPos>> rainShieldMap) {
-		rainShieldMap.clear();
-		rainShieldMap.putAll(rainShieldMap);
+		RainShieldData.rainShieldMap = rainShieldMap;
 	}
 
 	public RainShieldData() {
