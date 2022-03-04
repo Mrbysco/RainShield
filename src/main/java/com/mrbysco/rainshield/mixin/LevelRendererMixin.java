@@ -20,19 +20,21 @@ import javax.annotation.Nullable;
 
 @Mixin(LevelRenderer.class)
 public class LevelRendererMixin {
-	@Shadow @Nullable private ClientLevel level;
+	@Shadow
+	@Nullable
+	private ClientLevel level;
 
 	@Inject(method = "renderSnowAndRain(Lnet/minecraft/client/renderer/LightTexture;FDDD)V",
 			locals = LocalCapture.CAPTURE_FAILEXCEPTION, at = @At(
-					value = "INVOKE",
-					target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderColor(FFFF)V",
-					shift = Shift.AFTER,
-					ordinal = 0
-			), cancellable = true
+			value = "INVOKE",
+			target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderColor(FFFF)V",
+			shift = Shift.AFTER,
+			ordinal = 0
+	), cancellable = true
 	)
 	private void renderSnowAndRain(LightTexture lightTexture, float p_109705_, double x, double y, double z, CallbackInfo ci) {
 		BlockPos pos = new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z));
-		if(RainShieldData.cancelRain(level, pos)) {
+		if (RainShieldData.cancelRain(level, pos)) {
 			RenderSystem.disableBlend();
 			lightTexture.turnOffLightLayer();
 			ci.cancel();
@@ -41,16 +43,16 @@ public class LevelRendererMixin {
 
 	@Inject(method = "tickRain(Lnet/minecraft/client/Camera;)V",
 			locals = LocalCapture.CAPTURE_FAILEXCEPTION, at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/client/Camera;getPosition()Lnet/minecraft/world/phys/Vec3;",
-					shift = Shift.AFTER,
-					ordinal = 0
-			), cancellable = true
+			value = "INVOKE",
+			target = "Lnet/minecraft/client/Camera;getPosition()Lnet/minecraft/world/phys/Vec3;",
+			shift = Shift.AFTER,
+			ordinal = 0
+	), cancellable = true
 	)
 	private void tickRain(Camera camera, CallbackInfo ci) {
 		BlockPos blockpos = new BlockPos(camera.getPosition());
 
-		if(RainShieldData.cancelRain(level, blockpos)) {
+		if (RainShieldData.cancelRain(level, blockpos)) {
 			ci.cancel();
 		}
 	}

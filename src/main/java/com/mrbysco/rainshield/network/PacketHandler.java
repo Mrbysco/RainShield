@@ -17,7 +17,7 @@ public class PacketHandler {
 
 	private static int id = 0;
 
-	public static void init(){
+	public static void init() {
 		CHANNEL.registerMessage(id++, SyncShieldMapMessage.class, SyncShieldMapMessage::encode, SyncShieldMapMessage::decode, SyncShieldMapMessage::handle);
 	}
 }

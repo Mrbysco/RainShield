@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 public class SyncShieldMapMessage {
 
 	private final CompoundTag shieldMapTag;
-	
+
 	public SyncShieldMapMessage(CompoundTag tag) {
 		this.shieldMapTag = tag;
 	}
@@ -60,7 +60,7 @@ public class SyncShieldMapMessage {
 
 						List<BlockPos> blockPositionsList = new ArrayList<>();
 						ListTag blockPositions = listTag.getList("BlockPositions", ListTag.TAG_COMPOUND);
-						for(int j = 0; j < blockPositions.size(); ++j) {
+						for (int j = 0; j < blockPositions.size(); ++j) {
 							CompoundTag blockPosTag = blockPositions.getCompound(j);
 							BlockPos pos = BlockPos.of(blockPosTag.getLong("BlockPos"));
 							blockPositionsList.add(pos);

@@ -41,6 +41,6 @@ public class RainShieldConfig {
 
 	@SubscribeEvent
 	public static void onFileChange(final ModConfigEvent.Reloading configEvent) {
-		RainShield.LOGGER.debug("Rain Shield's config just got changed on the file system!");
+		RainShield.LOGGER.warn("Rain Shield's config just got changed on the file system!");
 	}
 }

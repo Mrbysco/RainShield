@@ -41,7 +41,7 @@ public class RainShieldData extends SavedData {
 
 		rainShieldMap.put(dimensionLocation, blockPositions);
 
-		if(!level.isClientSide) {
+		if (!level.isClientSide) {
 			RainShieldData data = get(level);
 			data.setDirty(true);
 		}
@@ -65,15 +65,15 @@ public class RainShieldData extends SavedData {
 	public static boolean cancelRain(Level level, BlockPos pos) {
 		if (level != null) {
 			ResourceLocation dimensionLocation = level.dimension().location();
-			if(rainShieldMap.containsKey(dimensionLocation)) {
+			if (rainShieldMap.containsKey(dimensionLocation)) {
 				List<BlockPos> blockPositions = rainShieldMap.get(dimensionLocation);
-				for(BlockPos shieldPos : blockPositions) {
+				for (BlockPos shieldPos : blockPositions) {
 					if (!level.isAreaLoaded(shieldPos, 1)) continue;
 
 					double distance = pos.distManhattan(shieldPos);
-					if(distance <= RainShieldConfig.COMMON.rainShieldDistance.get()) {
+					if (distance <= RainShieldConfig.COMMON.rainShieldDistance.get()) {
 						BlockState state = level.getBlockState(shieldPos);
-						if(state.getBlock() instanceof RainShieldBlock && !state.getValue(RainShieldBlock.POWERED)) {
+						if (state.getBlock() instanceof RainShieldBlock && !state.getValue(RainShieldBlock.POWERED)) {
 							return true;
 						}
 					}
@@ -97,7 +97,7 @@ public class RainShieldData extends SavedData {
 
 			List<BlockPos> blockPositionsList = new ArrayList<>();
 			ListTag blockPositions = listTag.getList("BlockPositions", ListTag.TAG_COMPOUND);
-			for(int j = 0; j < blockPositions.size(); ++j) {
+			for (int j = 0; j < blockPositions.size(); ++j) {
 				CompoundTag blockPosTag = blockPositions.getCompound(j);
 				BlockPos pos = BlockPos.of(blockPosTag.getLong("BlockPos"));
 				blockPositionsList.add(pos);
@@ -116,7 +116,7 @@ public class RainShieldData extends SavedData {
 			shieldTag.putString("Dimension", entry.getKey().toString());
 
 			ListTag blockPositions = new ListTag();
-			for(BlockPos pos : entry.getValue()) {
+			for (BlockPos pos : entry.getValue()) {
 				CompoundTag blockPosTag = new CompoundTag();
 				blockPosTag.putLong("BlockPos", pos.asLong());
 				blockPositions.add(blockPosTag);
