@@ -17,10 +17,7 @@ public class SyncHandler {
 	public void onLogin(PlayerLoggedInEvent event) {
 		Player player = event.getPlayer();
 		if (!player.level.isClientSide) {
-			ServerPlayer serverPlayer = (ServerPlayer) player;
-			RainShieldData rainShieldData = RainShieldData.get(serverPlayer.getServer().getLevel(Level.OVERWORLD));
-			CompoundTag tag = rainShieldData.save(new CompoundTag());
-			PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new SyncShieldMapMessage(tag));
+			syncShieldMap((ServerPlayer) player);
 		}
 	}
 
@@ -30,5 +27,11 @@ public class SyncHandler {
 		if (player.level.isClientSide) {
 			RainShieldData.rainShieldMap.clear();
 		}
+	}
+
+	public static void syncShieldMap(ServerPlayer player) {
+		RainShieldData rainShieldData = RainShieldData.get(player.getServer().getLevel(Level.OVERWORLD));
+		CompoundTag tag = rainShieldData.save(new CompoundTag());
+		PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new SyncShieldMapMessage(tag));
 	}
 }

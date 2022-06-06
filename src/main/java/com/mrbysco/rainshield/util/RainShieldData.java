@@ -3,6 +3,7 @@ package com.mrbysco.rainshield.util;
 import com.mrbysco.rainshield.RainShield;
 import com.mrbysco.rainshield.block.RainShieldBlock;
 import com.mrbysco.rainshield.client.RainShieldConfig;
+import com.mrbysco.rainshield.handler.SyncHandler;
 import com.mrbysco.rainshield.network.PacketHandler;
 import com.mrbysco.rainshield.network.message.SyncShieldMapMessage;
 import net.minecraft.core.BlockPos;
@@ -44,6 +45,7 @@ public class RainShieldData extends SavedData {
 		if (!level.isClientSide) {
 			RainShieldData data = get(level);
 			data.setDirty(true);
+			((ServerLevel) level).players().forEach(SyncHandler::syncShieldMap);
 		}
 	}
 
