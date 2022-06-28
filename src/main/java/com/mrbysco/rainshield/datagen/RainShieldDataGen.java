@@ -31,6 +31,7 @@ import net.minecraftforge.common.data.LanguageProvider;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.List;
@@ -51,14 +52,14 @@ public class RainShieldDataGen {
 		ExistingFileHelper helper = event.getExistingFileHelper();
 
 		if (event.includeServer()) {
-			generator.addProvider(new Loots(generator));
-			generator.addProvider(new Recipes(generator));
+			generator.addProvider(event.includeServer(), new Loots(generator));
+			generator.addProvider(event.includeServer(), new Recipes(generator));
 		}
 		if (event.includeClient()) {
-			generator.addProvider(new Language(generator));
-			generator.addProvider(new BlockModels(generator, helper));
-			generator.addProvider(new ItemModels(generator, helper));
-			generator.addProvider(new BlockStates(generator, helper));
+			generator.addProvider(event.includeClient(), new Language(generator));
+			generator.addProvider(event.includeClient(), new BlockModels(generator, helper));
+			generator.addProvider(event.includeClient(), new ItemModels(generator, helper));
+			generator.addProvider(event.includeClient(), new BlockStates(generator, helper));
 		}
 	}
 
@@ -130,7 +131,7 @@ public class RainShieldDataGen {
 		}
 
 		private void makeRod(Block block) {
-			ModelFile model = models().getExistingFile(modLoc("block/" + block.getRegistryName().getPath()));
+			ModelFile model = models().getExistingFile(modLoc("block/" + ForgeRegistries.BLOCKS.getKey(block).getPath()));
 			getVariantBuilder(block)
 					.partialState().with(BlockStateProperties.FACING, Direction.DOWN)
 					.modelForState().modelFile(model).rotationX(180).addModel()
@@ -158,7 +159,7 @@ public class RainShieldDataGen {
 		}
 
 		private void makeRod(Block block) {
-			ResourceLocation location = block.getRegistryName();
+			ResourceLocation location = ForgeRegistries.BLOCKS.getKey(block);
 			withExistingParent(location.getPath(), modLoc("block/rod"))
 					.texture("particle", "block/" + location.getPath())
 					.texture("rod", "block/" + location.getPath());
@@ -172,7 +173,8 @@ public class RainShieldDataGen {
 
 		@Override
 		protected void registerModels() {
-			withExistingParent(RAIN_SHIELD_ITEM.get().getRegistryName().getPath(), modLoc("block/" + RAIN_SHIELD_ITEM.get().getRegistryName().getPath()));
+			ResourceLocation location = ForgeRegistries.ITEMS.getKey(RAIN_SHIELD_ITEM.get());
+			withExistingParent(location.getPath(), modLoc("block/" + location.getPath()));
 		}
 	}
 }
