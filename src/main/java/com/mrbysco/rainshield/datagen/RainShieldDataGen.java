@@ -28,9 +28,9 @@ import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.LanguageProvider;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -39,10 +39,6 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
-import static com.mrbysco.rainshield.registry.RainShieldRegistry.BLOCKS;
-import static com.mrbysco.rainshield.registry.RainShieldRegistry.RAIN_SHIELD;
-import static com.mrbysco.rainshield.registry.RainShieldRegistry.RAIN_SHIELD_ITEM;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class RainShieldDataGen {
@@ -83,7 +79,7 @@ public class RainShieldDataGen {
 
 			@Override
 			protected Iterable<Block> getKnownBlocks() {
-				return (Iterable<Block>) BLOCKS.getEntries().stream().map(RegistryObject::get)::iterator;
+				return (Iterable<Block>) RainShieldRegistry.BLOCKS.getEntries().stream().map(RegistryObject::get)::iterator;
 			}
 		}
 
@@ -100,7 +96,7 @@ public class RainShieldDataGen {
 
 		@Override
 		protected void buildCraftingRecipes(Consumer<FinishedRecipe> recipeConsumer) {
-			ShapedRecipeBuilder.shaped(RAIN_SHIELD.get())
+			ShapedRecipeBuilder.shaped(RainShieldRegistry.RAIN_SHIELD.get())
 					.define('F', Items.FLINT)
 					.define('B', Tags.Items.RODS_BLAZE)
 					.define('N', Tags.Items.NETHERRACK)
@@ -116,7 +112,7 @@ public class RainShieldDataGen {
 
 		@Override
 		protected void addTranslations() {
-			addBlock(RAIN_SHIELD, "Rain Shield");
+			addBlock(RainShieldRegistry.RAIN_SHIELD, "Rain Shield");
 		}
 	}
 
@@ -127,7 +123,7 @@ public class RainShieldDataGen {
 
 		@Override
 		protected void registerStatesAndModels() {
-			makeRod(RAIN_SHIELD.get());
+			makeRod(RainShieldRegistry.RAIN_SHIELD.get());
 		}
 
 		private void makeRod(Block block) {
@@ -155,7 +151,7 @@ public class RainShieldDataGen {
 
 		@Override
 		protected void registerModels() {
-			makeRod(RAIN_SHIELD.get());
+			makeRod(RainShieldRegistry.RAIN_SHIELD.get());
 		}
 
 		private void makeRod(Block block) {
@@ -173,7 +169,7 @@ public class RainShieldDataGen {
 
 		@Override
 		protected void registerModels() {
-			ResourceLocation location = ForgeRegistries.ITEMS.getKey(RAIN_SHIELD_ITEM.get());
+			ResourceLocation location = ForgeRegistries.ITEMS.getKey(RainShieldRegistry.RAIN_SHIELD_ITEM.get());
 			withExistingParent(location.getPath(), modLoc("block/" + location.getPath()));
 		}
 	}

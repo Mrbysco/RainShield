@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    " F ",
-    " B ",
-    "NNN"
-  ],
   "key": {
-    "F": {
-      "item": "minecraft:flint"
-    },
     "B": {
       "tag": "forge:rods/blaze"
+    },
+    "F": {
+      "item": "minecraft:flint"
     },
     "N": {
       "tag": "forge:netherrack"
     }
   },
+  "pattern": [
+    " F ",
+    " B ",
+    "NNN"
+  ],
   "result": {
     "item": "rainshield:rain_shield"
   }
