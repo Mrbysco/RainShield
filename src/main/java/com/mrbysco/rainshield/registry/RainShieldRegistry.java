@@ -19,5 +19,5 @@ public class RainShieldRegistry {
 	public static final RegistryObject<Block> RAIN_SHIELD = BLOCKS.register("rain_shield", () ->
 			new RainShieldBlock(Block.Properties.of(Material.DECORATION).strength(0.8F).instabreak().sound(SoundType.METAL).noOcclusion()));
 
-	public static final RegistryObject<Item> RAIN_SHIELD_ITEM = ITEMS.register("rain_shield", () -> new BlockItem(RAIN_SHIELD.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+	public static final RegistryObject<Item> RAIN_SHIELD_ITEM = ITEMS.register("rain_shield", () -> new BlockItem(RAIN_SHIELD.get(), new Item.Properties()));
 }

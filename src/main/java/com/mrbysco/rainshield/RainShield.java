@@ -5,7 +5,9 @@ import com.mrbysco.rainshield.client.RainShieldConfig;
 import com.mrbysco.rainshield.handler.SyncHandler;
 import com.mrbysco.rainshield.network.PacketHandler;
 import com.mrbysco.rainshield.registry.RainShieldRegistry;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -25,6 +27,7 @@ public class RainShield {
 		eventBus.register(RainShieldConfig.class);
 
 		eventBus.addListener(this::setup);
+		eventBus.addListener(this::addTabContents);
 
 		RainShieldRegistry.BLOCKS.register(eventBus);
 		RainShieldRegistry.ITEMS.register(eventBus);
@@ -34,5 +37,11 @@ public class RainShield {
 
 	private void setup(final FMLCommonSetupEvent event) {
 		PacketHandler.init();
+	}
+
+	private void addTabContents(final CreativeModeTabEvent.BuildContents event) {
+		if (event.getTab() == CreativeModeTabs.REDSTONE_BLOCKS) {
+			event.registerSimple(event.getTab(), RainShieldRegistry.RAIN_SHIELD_ITEM.get());
+		}
 	}
 }

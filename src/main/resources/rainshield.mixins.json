@@ -6,9 +6,9 @@
   "refmap": "rainshield.refmap.json",
   "target": "@env(DEFAULT)",
   "client": [
-	"LevelRendererMixin"
+    "LevelRendererMixin"
   ],
   "injectors": {
-	"defaultRequire": 1
+    "defaultRequire": 1
   }
 }
