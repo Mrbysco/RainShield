@@ -41,7 +41,7 @@ public class RainShield {
 
 	private void addTabContents(final CreativeModeTabEvent.BuildContents event) {
 		if (event.getTab() == CreativeModeTabs.REDSTONE_BLOCKS) {
-			event.registerSimple(event.getTab(), RainShieldRegistry.RAIN_SHIELD_ITEM.get());
+			event.accept(RainShieldRegistry.RAIN_SHIELD_ITEM.get());
 		}
 	}
 }

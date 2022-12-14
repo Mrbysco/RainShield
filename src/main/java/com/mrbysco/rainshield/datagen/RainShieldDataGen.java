@@ -51,10 +51,10 @@ public class RainShieldDataGen {
 			generator.addProvider(event.includeServer(), new Recipes(packOutput));
 		}
 		if (event.includeClient()) {
-			generator.addProvider(event.includeClient(), new Language(generator));
-			generator.addProvider(event.includeClient(), new BlockModels(generator, helper));
-			generator.addProvider(event.includeClient(), new ItemModels(generator, helper));
-			generator.addProvider(event.includeClient(), new BlockStates(generator, helper));
+			generator.addProvider(event.includeClient(), new Language(packOutput));
+			generator.addProvider(event.includeClient(), new BlockModels(packOutput, helper));
+			generator.addProvider(event.includeClient(), new ItemModels(packOutput, helper));
+			generator.addProvider(event.includeClient(), new BlockStates(packOutput, helper));
 		}
 	}
 
@@ -109,8 +109,8 @@ public class RainShieldDataGen {
 	}
 
 	private static class Language extends LanguageProvider {
-		public Language(DataGenerator gen) {
-			super(gen, RainShield.MOD_ID, "en_us");
+		public Language(PackOutput packOutput) {
+			super(packOutput, RainShield.MOD_ID, "en_us");
 		}
 
 		@Override
@@ -120,8 +120,8 @@ public class RainShieldDataGen {
 	}
 
 	private static class BlockStates extends BlockStateProvider {
-		public BlockStates(DataGenerator gen, ExistingFileHelper helper) {
-			super(gen, RainShield.MOD_ID, helper);
+		public BlockStates(PackOutput packOutput, ExistingFileHelper helper) {
+			super(packOutput, RainShield.MOD_ID, helper);
 		}
 
 		@Override
@@ -148,8 +148,8 @@ public class RainShieldDataGen {
 	}
 
 	private static class BlockModels extends BlockModelProvider {
-		public BlockModels(DataGenerator gen, ExistingFileHelper helper) {
-			super(gen, RainShield.MOD_ID, helper);
+		public BlockModels(PackOutput packOutput, ExistingFileHelper helper) {
+			super(packOutput, RainShield.MOD_ID, helper);
 		}
 
 		@Override
@@ -166,8 +166,8 @@ public class RainShieldDataGen {
 	}
 
 	private static class ItemModels extends ItemModelProvider {
-		public ItemModels(DataGenerator gen, ExistingFileHelper helper) {
-			super(gen, RainShield.MOD_ID, helper);
+		public ItemModels(PackOutput packOutput, ExistingFileHelper helper) {
+			super(packOutput, RainShield.MOD_ID, helper);
 		}
 
 		@Override
