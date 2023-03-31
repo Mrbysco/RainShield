@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "rainshield:rain_shield"
-  }
+  },
+  "show_notification": true
 }

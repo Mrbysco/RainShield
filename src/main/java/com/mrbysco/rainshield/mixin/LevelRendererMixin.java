@@ -27,7 +27,7 @@ public class LevelRendererMixin {
 	@Inject(method = "renderSnowAndRain(Lnet/minecraft/client/renderer/LightTexture;FDDD)V",
 			locals = LocalCapture.CAPTURE_FAILEXCEPTION, at = @At(
 			value = "INVOKE",
-			target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderColor(FFFF)V",
+			target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShader(Ljava/util/function/Supplier;)V",
 			shift = Shift.AFTER,
 			ordinal = 0
 	), cancellable = true
@@ -50,9 +50,7 @@ public class LevelRendererMixin {
 	), cancellable = true
 	)
 	private void tickRain(Camera camera, CallbackInfo ci) {
-		BlockPos blockpos = new BlockPos(camera.getPosition());
-
-		if (RainShieldData.cancelRain(level, blockpos)) {
+		if (RainShieldData.cancelRain(level, BlockPos.containing(camera.getPosition()))) {
 			ci.cancel();
 		}
 	}
