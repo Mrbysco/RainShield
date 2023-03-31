@@ -2,6 +2,8 @@ plugins {
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '5.+'
     id 'org.spongepowered.mixin'
+    id 'com.matthewprenger.cursegradle' version '1.4.0'
+    id 'com.modrinth.minotaur' version "2.+"
 }
 
 version = "${version}"
@@ -93,6 +95,9 @@ repositories {
     maven {
         url = "https://dvs1.progwml6.com/files/maven"
     }
+    maven {
+        url = "https://maven.blamejared.com"
+    }
 }
 
 dependencies {
@@ -102,7 +107,7 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
     compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
 
-    // runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
+    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
 }
 
 // Example for how to get properties into the manifest for reading at runtime.
@@ -164,3 +169,6 @@ if (System.getProperty("idea.sync.active") == "true") {
         }
     }
 }
+
+apply from: 'gradle/curseforge.gradle'
+apply from: 'gradle/modrinth.gradle'
