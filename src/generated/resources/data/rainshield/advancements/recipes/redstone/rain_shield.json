@@ -28,5 +28,6 @@
     "recipes": [
       "rainshield:rain_shield"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

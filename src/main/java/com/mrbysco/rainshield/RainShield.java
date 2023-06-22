@@ -7,7 +7,7 @@ import com.mrbysco.rainshield.network.PacketHandler;
 import com.mrbysco.rainshield.registry.RainShieldRegistry;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -39,8 +39,8 @@ public class RainShield {
 		PacketHandler.init();
 	}
 
-	private void addTabContents(final CreativeModeTabEvent.BuildContents event) {
-		if (event.getTab() == CreativeModeTabs.REDSTONE_BLOCKS) {
+	private void addTabContents(final BuildCreativeModeTabContentsEvent event) {
+		if (event.getTabKey() == CreativeModeTabs.REDSTONE_BLOCKS) {
 			event.accept(RainShieldRegistry.RAIN_SHIELD_ITEM.get());
 		}
 	}

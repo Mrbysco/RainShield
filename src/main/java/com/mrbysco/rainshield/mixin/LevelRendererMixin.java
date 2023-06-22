@@ -32,8 +32,8 @@ public class LevelRendererMixin {
 			ordinal = 0
 	), cancellable = true
 	)
-	private void renderSnowAndRain(LightTexture lightTexture, float p_109705_, double x, double y, double z, CallbackInfo ci) {
-		BlockPos pos = new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z));
+	private void renderSnowAndRain(LightTexture lightTexture, float partialTick, double camX, double camY, double camZ, CallbackInfo ci) {
+		BlockPos pos = new BlockPos(Mth.floor(camX), Mth.floor(camY), Mth.floor(camZ));
 		if (RainShieldData.cancelRain(level, pos)) {
 			RenderSystem.disableBlend();
 			lightTexture.turnOffLightLayer();

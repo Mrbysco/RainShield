@@ -77,7 +77,7 @@ public class RainShieldBlock extends RodBlock implements SimpleWaterloggedBlock 
 		}
 	}
 
-	public void tick(BlockState state, ServerLevel level, BlockPos pos, Random random) {
+	public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
 		if (state.getValue(POWERED) && !level.hasNeighborSignal(pos)) {
 			level.setBlock(pos, state.cycle(POWERED), 2);
 		}

@@ -16,7 +16,7 @@ public class SyncHandler {
 	@SubscribeEvent
 	public void onLogin(PlayerLoggedInEvent event) {
 		Player player = event.getEntity();
-		if (!player.level.isClientSide) {
+		if (!player.level().isClientSide) {
 			syncShieldMap((ServerPlayer) player);
 		}
 	}
@@ -24,7 +24,7 @@ public class SyncHandler {
 	@SubscribeEvent
 	public void onLogin(PlayerLoggedOutEvent event) {
 		Player player = event.getEntity();
-		if (player.level.isClientSide) {
+		if (player.level().isClientSide) {
 			RainShieldData.rainShieldMap.clear();
 		}
 	}
