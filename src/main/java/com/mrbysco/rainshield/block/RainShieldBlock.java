@@ -22,8 +22,6 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Random;
-
 public class RainShieldBlock extends RodBlock implements SimpleWaterloggedBlock {
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
@@ -56,15 +54,15 @@ public class RainShieldBlock extends RodBlock implements SimpleWaterloggedBlock 
 	}
 
 	@Override
-	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean p_51542_) {
+	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
 		if (!state.is(newState.getBlock())) {
 			RainShieldData.removeRainShieldPos(pos, level);
 
-			super.onRemove(state, level, pos, newState, p_51542_);
+			super.onRemove(state, level, pos, newState, isMoving);
 		}
 	}
 
-	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos p_55670_, boolean p_55671_) {
+	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
 		if (!level.isClientSide) {
 			boolean flag = state.getValue(POWERED);
 			if (flag != level.hasNeighborSignal(pos)) {
@@ -89,12 +87,12 @@ public class RainShieldBlock extends RodBlock implements SimpleWaterloggedBlock 
 		return this.defaultBlockState().setValue(FACING, placeContext.getClickedFace()).setValue(WATERLOGGED, Boolean.valueOf(flag));
 	}
 
-	public BlockState updateShape(BlockState state, Direction direction, BlockState p_153741_, LevelAccessor levelAccessor, BlockPos pos, BlockPos p_153744_) {
+	public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
 		if (state.getValue(WATERLOGGED)) {
-			levelAccessor.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(levelAccessor));
+			level.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
 		}
 
-		return super.updateShape(state, direction, p_153741_, levelAccessor, pos, p_153744_);
+		return super.updateShape(state, facing, facingState, level, currentPos, facingPos);
 	}
 
 	public FluidState getFluidState(BlockState state) {

@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[46,)"
+loaderVersion="[1,)"
 issueTrackerURL="https://github.com/Mrbysco/RainShield/issues"
 license="MIT"
 
@@ -15,6 +15,14 @@ Just a simple mod adding a Rain Shield
 [[dependencies.rainshield]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.20,1.21)"
+versionRange="[1.20.2,1.21)"
 ordering="NONE"
 side="BOTH"
+[[dependencies.rainshield]]
+modId="neoforge"
+mandatory=true
+versionRange="[20.2.59-beta,)"
+ordering="NONE"
+side="BOTH"
+[[mixins]]
+config = "rainshield.mixins.json"

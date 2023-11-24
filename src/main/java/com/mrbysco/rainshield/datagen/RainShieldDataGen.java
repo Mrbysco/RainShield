@@ -1,14 +1,16 @@
 package com.mrbysco.rainshield.datagen;
 
 import com.mrbysco.rainshield.RainShield;
+import com.mrbysco.rainshield.block.RainShieldBlock;
 import com.mrbysco.rainshield.registry.RainShieldRegistry;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
@@ -19,23 +21,22 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import net.minecraftforge.client.model.generators.BlockModelProvider;
-import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ItemModelProvider;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.common.data.LanguageProvider;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.model.generators.BlockModelProvider;
+import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
+import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.LanguageProvider;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.registries.DeferredBlock;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class RainShieldDataGen {
@@ -47,7 +48,7 @@ public class RainShieldDataGen {
 
 		if (event.includeServer()) {
 			generator.addProvider(event.includeServer(), new Loots(packOutput));
-			generator.addProvider(event.includeServer(), new Recipes(packOutput));
+			generator.addProvider(event.includeServer(), new Recipes(packOutput, event.getLookupProvider()));
 		}
 		if (event.includeClient()) {
 			generator.addProvider(event.includeClient(), new Language(packOutput));
@@ -81,7 +82,7 @@ public class RainShieldDataGen {
 
 			@Override
 			protected Iterable<Block> getKnownBlocks() {
-				return (Iterable<Block>) RainShieldRegistry.BLOCKS.getEntries().stream().map(RegistryObject::get)::iterator;
+				return (Iterable<Block>) RainShieldRegistry.BLOCKS.getEntries().stream().map(holder -> (Block) holder.get())::iterator;
 			}
 		}
 
@@ -92,18 +93,18 @@ public class RainShieldDataGen {
 	}
 
 	public static class Recipes extends RecipeProvider {
-		public Recipes(PackOutput packOutput) {
-			super(packOutput);
+		public Recipes(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+			super(packOutput, lookupProvider);
 		}
 
 		@Override
-		protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
+		protected void buildRecipes(RecipeOutput recipeOutput) {
 			ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, RainShieldRegistry.RAIN_SHIELD.get())
 					.define('F', Items.FLINT)
 					.define('B', Tags.Items.RODS_BLAZE)
 					.define('N', Tags.Items.NETHERRACK)
 					.pattern(" F ").pattern(" B ").pattern("NNN").unlockedBy("has_blaze_rod",
-							has(Tags.Items.RODS_BLAZE)).save(consumer);
+							has(Tags.Items.RODS_BLAZE)).save(recipeOutput);
 		}
 	}
 
@@ -125,12 +126,12 @@ public class RainShieldDataGen {
 
 		@Override
 		protected void registerStatesAndModels() {
-			makeRod(RainShieldRegistry.RAIN_SHIELD.get());
+			makeRod(RainShieldRegistry.RAIN_SHIELD);
 		}
 
-		private void makeRod(Block block) {
-			ModelFile model = models().getExistingFile(modLoc("block/" + ForgeRegistries.BLOCKS.getKey(block).getPath()));
-			getVariantBuilder(block)
+		private void makeRod(DeferredBlock<RainShieldBlock> deferredBlock) {
+			ModelFile model = models().getExistingFile(modLoc("block/" + deferredBlock.getId().getPath()));
+			getVariantBuilder(deferredBlock.get())
 					.partialState().with(BlockStateProperties.FACING, Direction.DOWN)
 					.modelForState().modelFile(model).rotationX(180).addModel()
 					.partialState().with(BlockStateProperties.FACING, Direction.EAST)
@@ -153,11 +154,10 @@ public class RainShieldDataGen {
 
 		@Override
 		protected void registerModels() {
-			makeRod(RainShieldRegistry.RAIN_SHIELD.get());
+			makeRod(RainShieldRegistry.RAIN_SHIELD.getId());
 		}
 
-		private void makeRod(Block block) {
-			ResourceLocation location = ForgeRegistries.BLOCKS.getKey(block);
+		private void makeRod(ResourceLocation location) {
 			withExistingParent(location.getPath(), modLoc("block/rod"))
 					.texture("particle", "block/" + location.getPath())
 					.texture("rod", "block/" + location.getPath());
@@ -171,7 +171,7 @@ public class RainShieldDataGen {
 
 		@Override
 		protected void registerModels() {
-			ResourceLocation location = ForgeRegistries.ITEMS.getKey(RainShieldRegistry.RAIN_SHIELD_ITEM.get());
+			ResourceLocation location = RainShieldRegistry.RAIN_SHIELD_ITEM.getId();
 			withExistingParent(location.getPath(), modLoc("block/" + location.getPath()));
 		}
 	}

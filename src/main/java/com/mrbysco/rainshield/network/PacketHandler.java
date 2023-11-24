@@ -3,8 +3,8 @@ package com.mrbysco.rainshield.network;
 import com.mrbysco.rainshield.RainShield;
 import com.mrbysco.rainshield.network.message.SyncShieldMapMessage;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.neoforged.neoforge.network.NetworkRegistry;
+import net.neoforged.neoforge.network.simple.SimpleChannel;
 
 public class PacketHandler {
 	private static final String PROTOCOL_VERSION = "1";
