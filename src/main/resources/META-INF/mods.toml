@@ -21,7 +21,7 @@ side="BOTH"
 [[dependencies.rainshield]]
 modId="neoforge"
 mandatory=true
-versionRange="[20.2.59-beta,)"
+versionRange="[20.2.64-beta,)"
 ordering="NONE"
 side="BOTH"
 [[mixins]]
