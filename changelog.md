@@ -1,1 +1,1 @@
-* Update to be compatible with NeoForge `22.2.64-beta` and above
+* Initial update to 1.20.4
