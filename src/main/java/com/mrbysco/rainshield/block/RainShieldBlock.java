@@ -1,5 +1,6 @@
 package com.mrbysco.rainshield.block;
 
+import com.mojang.serialization.MapCodec;
 import com.mrbysco.rainshield.util.RainShieldData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,8 +24,15 @@ import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.Nullable;
 
 public class RainShieldBlock extends RodBlock implements SimpleWaterloggedBlock {
+	public static final MapCodec<RainShieldBlock> CODEC = simpleCodec(RainShieldBlock::new);
+
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
+
+	@Override
+	public MapCodec<RainShieldBlock> codec() {
+		return CODEC;
+	}
 
 	public RainShieldBlock(Properties properties) {
 		super(properties);

@@ -11,7 +11,6 @@ import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig.Type;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import org.slf4j.Logger;
@@ -21,8 +20,7 @@ public class RainShield {
 	public static final String MOD_ID = "rainshield";
 	public static final Logger LOGGER = LogUtils.getLogger();
 
-	public RainShield() {
-		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+	public RainShield(IEventBus eventBus) {
 		ModLoadingContext.get().registerConfig(Type.CLIENT, RainShieldConfig.commonSpec);
 		eventBus.register(RainShieldConfig.class);
 
