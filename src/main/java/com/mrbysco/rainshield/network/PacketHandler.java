@@ -1,23 +1,16 @@
 package com.mrbysco.rainshield.network;
 
 import com.mrbysco.rainshield.RainShield;
-import com.mrbysco.rainshield.network.message.SyncShieldMapMessage;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.NetworkRegistry;
-import net.neoforged.neoforge.network.simple.SimpleChannel;
+import com.mrbysco.rainshield.network.handler.ClientPayloadHandler;
+import com.mrbysco.rainshield.network.payloads.SyncShieldMapPayload;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
+import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
 
 public class PacketHandler {
-	private static final String PROTOCOL_VERSION = "1";
-	public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
-			new ResourceLocation(RainShield.MOD_ID, "main"),
-			() -> PROTOCOL_VERSION,
-			PROTOCOL_VERSION::equals,
-			PROTOCOL_VERSION::equals
-	);
+	public static void setupPackets(final RegisterPayloadHandlerEvent event) {
+		final IPayloadRegistrar registrar = event.registrar(RainShield.MOD_ID);
 
-	private static int id = 0;
-
-	public static void init() {
-		CHANNEL.registerMessage(id++, SyncShieldMapMessage.class, SyncShieldMapMessage::encode, SyncShieldMapMessage::decode, SyncShieldMapMessage::handle);
+		registrar.play(SyncShieldMapPayload.ID, SyncShieldMapPayload::new, handler -> handler
+				.client(ClientPayloadHandler.getInstance()::handleData));
 	}
 }

@@ -4,8 +4,7 @@ import com.mrbysco.rainshield.RainShield;
 import com.mrbysco.rainshield.block.RainShieldBlock;
 import com.mrbysco.rainshield.client.RainShieldConfig;
 import com.mrbysco.rainshield.handler.SyncHandler;
-import com.mrbysco.rainshield.network.PacketHandler;
-import com.mrbysco.rainshield.network.message.SyncShieldMapMessage;
+import com.mrbysco.rainshield.network.payloads.SyncShieldMapPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -87,7 +86,7 @@ public class RainShieldData extends SavedData {
 	}
 
 	public static RainShieldData load(CompoundTag tag) {
-		PacketHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncShieldMapMessage(tag));
+		PacketDistributor.ALL.noArg().send(new SyncShieldMapPayload(tag));
 
 		ListTag rainShieldMap = tag.getList("RainShieldMap", CompoundTag.TAG_COMPOUND);
 		Map<ResourceLocation, List<BlockPos>> shieldMap = new HashMap<>();

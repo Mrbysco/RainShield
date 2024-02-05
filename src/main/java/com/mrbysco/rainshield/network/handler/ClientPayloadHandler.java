@@ -1,40 +1,29 @@
-package com.mrbysco.rainshield.network.message;
+package com.mrbysco.rainshield.network.handler;
 
+import com.mrbysco.rainshield.network.payloads.SyncShieldMapPayload;
 import com.mrbysco.rainshield.util.RainShieldData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.network.NetworkEvent.Context;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SyncShieldMapMessage {
+public class ClientPayloadHandler {
+	private static final ClientPayloadHandler INSTANCE = new ClientPayloadHandler();
 
-	private final CompoundTag shieldMapTag;
-
-	public SyncShieldMapMessage(CompoundTag tag) {
-		this.shieldMapTag = tag;
+	public static ClientPayloadHandler getInstance() {
+		return INSTANCE;
 	}
 
-	public void encode(FriendlyByteBuf buffer) {
-		buffer.writeNbt(shieldMapTag);
-	}
-
-	public static SyncShieldMapMessage decode(final FriendlyByteBuf buffer) {
-		return new SyncShieldMapMessage(buffer.readNbt());
-	}
-
-	public void handle(Context ctx) {
-		ctx.enqueueWork(() -> {
-			if (ctx.getDirection().getReceptionSide().isClient()) {
-				if (FMLEnvironment.dist.isClient()) {
-					ListTag rainShieldMap = shieldMapTag.getList("RainShieldMap", CompoundTag.TAG_COMPOUND);
+	public void handleData(final SyncShieldMapPayload payload, final PlayPayloadContext context) {
+		context.workHandler().submitAsync(() -> {
+					ListTag rainShieldMap = payload.shieldMapTag().getList("RainShieldMap", CompoundTag.TAG_COMPOUND);
 					Map<ResourceLocation, List<BlockPos>> shieldMap = new HashMap<>();
 
 					for (int i = 0; i < rainShieldMap.size(); ++i) {
@@ -54,9 +43,11 @@ public class SyncShieldMapMessage {
 
 					RainShieldData.rainShieldMap.clear();
 					RainShieldData.rainShieldMap.putAll(shieldMap);
-				}
-			}
-		});
-		ctx.setPacketHandled(true);
+				})
+				.exceptionally(e -> {
+					// Handle exception
+					context.packetHandler().disconnect(Component.translatable("rainshield.networking.sync_shields.failed", e.getMessage()));
+					return null;
+				});
 	}
 }

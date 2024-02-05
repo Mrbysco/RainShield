@@ -4,7 +4,6 @@ import com.mrbysco.rainshield.RainShield;
 import com.mrbysco.rainshield.block.RainShieldBlock;
 import com.mrbysco.rainshield.registry.RainShieldRegistry;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.BlockLootSubProvider;
@@ -36,7 +35,6 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class RainShieldDataGen {
@@ -48,7 +46,7 @@ public class RainShieldDataGen {
 
 		if (event.includeServer()) {
 			generator.addProvider(event.includeServer(), new Loots(packOutput));
-			generator.addProvider(event.includeServer(), new Recipes(packOutput, event.getLookupProvider()));
+			generator.addProvider(event.includeServer(), new Recipes(packOutput));
 		}
 		if (event.includeClient()) {
 			generator.addProvider(event.includeClient(), new Language(packOutput));
@@ -93,18 +91,18 @@ public class RainShieldDataGen {
 	}
 
 	public static class Recipes extends RecipeProvider {
-		public Recipes(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
-			super(packOutput, lookupProvider);
+		public Recipes(PackOutput packOutput) {
+			super(packOutput);
 		}
 
 		@Override
-		protected void buildRecipes(RecipeOutput recipeOutput) {
+		protected void buildRecipes(RecipeOutput output) {
 			ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, RainShieldRegistry.RAIN_SHIELD.get())
 					.define('F', Items.FLINT)
 					.define('B', Tags.Items.RODS_BLAZE)
 					.define('N', Tags.Items.NETHERRACK)
 					.pattern(" F ").pattern(" B ").pattern("NNN").unlockedBy("has_blaze_rod",
-							has(Tags.Items.RODS_BLAZE)).save(recipeOutput);
+							has(Tags.Items.RODS_BLAZE)).save(output);
 		}
 	}
 
@@ -116,6 +114,8 @@ public class RainShieldDataGen {
 		@Override
 		protected void addTranslations() {
 			addBlock(RainShieldRegistry.RAIN_SHIELD, "Rain Shield");
+
+			add("rainshield.networking.sync_shields.failed", "Failed to sync rain shield data: %s");
 		}
 	}
 

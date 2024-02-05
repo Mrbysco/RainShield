@@ -10,7 +10,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig.Type;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import org.slf4j.Logger;
@@ -24,17 +23,13 @@ public class RainShield {
 		ModLoadingContext.get().registerConfig(Type.CLIENT, RainShieldConfig.commonSpec);
 		eventBus.register(RainShieldConfig.class);
 
-		eventBus.addListener(this::setup);
+		eventBus.addListener(PacketHandler::setupPackets);
 		eventBus.addListener(this::addTabContents);
 
 		RainShieldRegistry.BLOCKS.register(eventBus);
 		RainShieldRegistry.ITEMS.register(eventBus);
 
 		NeoForge.EVENT_BUS.register(new SyncHandler());
-	}
-
-	private void setup(final FMLCommonSetupEvent event) {
-		PacketHandler.init();
 	}
 
 	private void addTabContents(final BuildCreativeModeTabContentsEvent event) {

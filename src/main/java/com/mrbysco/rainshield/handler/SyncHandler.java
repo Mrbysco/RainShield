@@ -1,7 +1,6 @@
 package com.mrbysco.rainshield.handler;
 
-import com.mrbysco.rainshield.network.PacketHandler;
-import com.mrbysco.rainshield.network.message.SyncShieldMapMessage;
+import com.mrbysco.rainshield.network.payloads.SyncShieldMapPayload;
 import com.mrbysco.rainshield.util.RainShieldData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -10,7 +9,6 @@ import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public class SyncHandler {
 	@SubscribeEvent
@@ -32,6 +30,6 @@ public class SyncHandler {
 	public static void syncShieldMap(ServerPlayer player) {
 		RainShieldData rainShieldData = RainShieldData.get(player.getServer().getLevel(Level.OVERWORLD));
 		CompoundTag tag = rainShieldData.save(new CompoundTag());
-		PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new SyncShieldMapMessage(tag));
+		player.connection.send(new SyncShieldMapPayload(tag));
 	}
 }
