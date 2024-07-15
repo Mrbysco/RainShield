@@ -73,8 +73,8 @@ public class RainShieldDataGen {
 
 		public static class RainShieldBlockTables extends BlockLootSubProvider {
 
-			protected RainShieldBlockTables() {
-				super(Set.of(), FeatureFlags.REGISTRY.allFlags());
+			protected RainShieldBlockTables(HolderLookup.Provider provider) {
+				super(Set.of(), FeatureFlags.REGISTRY.allFlags(), provider);
 			}
 
 			@Override
