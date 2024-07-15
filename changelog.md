@@ -1,1 +1,1 @@
-* Hopefully fix an issue where culling stays disabled
+* Initial update to 1.20.6
