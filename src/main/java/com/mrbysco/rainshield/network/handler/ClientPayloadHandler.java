@@ -7,7 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,8 +21,8 @@ public class ClientPayloadHandler {
 		return INSTANCE;
 	}
 
-	public void handleData(final SyncShieldMapPayload payload, final PlayPayloadContext context) {
-		context.workHandler().submitAsync(() -> {
+	public void handleData(final SyncShieldMapPayload payload, final IPayloadContext context) {
+		context.enqueueWork(() -> {
 					ListTag rainShieldMap = payload.shieldMapTag().getList("RainShieldMap", CompoundTag.TAG_COMPOUND);
 					Map<ResourceLocation, List<BlockPos>> shieldMap = new HashMap<>();
 
@@ -46,7 +46,7 @@ public class ClientPayloadHandler {
 				})
 				.exceptionally(e -> {
 					// Handle exception
-					context.packetHandler().disconnect(Component.translatable("rainshield.networking.sync_shields.failed", e.getMessage()));
+					context.disconnect(Component.translatable("rainshield.networking.sync_shields.failed", e.getMessage()));
 					return null;
 				});
 	}

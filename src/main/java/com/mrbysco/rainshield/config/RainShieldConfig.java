@@ -1,4 +1,4 @@
-package com.mrbysco.rainshield.client;
+package com.mrbysco.rainshield.config;
 
 import com.mrbysco.rainshield.RainShield;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -9,10 +9,10 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class RainShieldConfig {
 
-	public static class Common {
+	public static class Client {
 		public final IntValue rainShieldDistance;
 
-		Common(ModConfigSpec.Builder builder) {
+		Client(ModConfigSpec.Builder builder) {
 			builder.comment("General settings")
 					.push("General");
 
@@ -25,13 +25,13 @@ public class RainShieldConfig {
 		}
 	}
 
-	public static final ModConfigSpec commonSpec;
-	public static final Common COMMON;
+	public static final ModConfigSpec clientSpec;
+	public static final Client CLIENT;
 
 	static {
-		final Pair<Common, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(Common::new);
-		commonSpec = specPair.getRight();
-		COMMON = specPair.getLeft();
+		final Pair<Client, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(Client::new);
+		clientSpec = specPair.getRight();
+		CLIENT = specPair.getLeft();
 	}
 
 	@SubscribeEvent

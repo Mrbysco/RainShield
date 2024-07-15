@@ -3,11 +3,16 @@ package com.mrbysco.rainshield.network.payloads;
 import com.mrbysco.rainshield.RainShield;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
 public record SyncShieldMapPayload(CompoundTag shieldMapTag) implements CustomPacketPayload {
-	public static final ResourceLocation ID = new ResourceLocation(RainShield.MOD_ID, "sync_shields");
+
+	public static final StreamCodec<FriendlyByteBuf, SyncShieldMapPayload> CODEC = CustomPacketPayload.codec(
+			SyncShieldMapPayload::write,
+			SyncShieldMapPayload::new);
+	public static final Type<SyncShieldMapPayload> ID = new Type<>(new ResourceLocation(RainShield.MOD_ID, "sync_shields"));
 
 	public SyncShieldMapPayload(final FriendlyByteBuf buffer) {
 		this(buffer.readNbt());
@@ -18,7 +23,7 @@ public record SyncShieldMapPayload(CompoundTag shieldMapTag) implements CustomPa
 	}
 
 	@Override
-	public ResourceLocation id() {
+	public Type<? extends CustomPacketPayload> type() {
 		return ID;
 	}
 }

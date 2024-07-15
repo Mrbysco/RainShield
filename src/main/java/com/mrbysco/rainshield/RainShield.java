@@ -1,13 +1,14 @@
 package com.mrbysco.rainshield;
 
 import com.mojang.logging.LogUtils;
-import com.mrbysco.rainshield.client.RainShieldConfig;
+import com.mrbysco.rainshield.config.RainShieldConfig;
 import com.mrbysco.rainshield.handler.SyncHandler;
 import com.mrbysco.rainshield.network.PacketHandler;
 import com.mrbysco.rainshield.registry.RainShieldRegistry;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig.Type;
 import net.neoforged.neoforge.common.NeoForge;
@@ -19,9 +20,11 @@ public class RainShield {
 	public static final String MOD_ID = "rainshield";
 	public static final Logger LOGGER = LogUtils.getLogger();
 
-	public RainShield(IEventBus eventBus) {
-		ModLoadingContext.get().registerConfig(Type.CLIENT, RainShieldConfig.commonSpec);
-		eventBus.register(RainShieldConfig.class);
+	public RainShield(IEventBus eventBus, Dist dist, ModContainer container) {
+		if (dist.isClient()) {
+			container.registerConfig(Type.CLIENT, RainShieldConfig.clientSpec);
+			eventBus.register(RainShieldConfig.class);
+		}
 
 		eventBus.addListener(PacketHandler::setupPackets);
 		eventBus.addListener(this::addTabContents);

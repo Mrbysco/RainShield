@@ -29,7 +29,7 @@ public class SyncHandler {
 
 	public static void syncShieldMap(ServerPlayer player) {
 		RainShieldData rainShieldData = RainShieldData.get(player.getServer().getLevel(Level.OVERWORLD));
-		CompoundTag tag = rainShieldData.save(new CompoundTag());
+		CompoundTag tag = rainShieldData.save(new CompoundTag(), player.registryAccess());
 		player.connection.send(new SyncShieldMapPayload(tag));
 	}
 }

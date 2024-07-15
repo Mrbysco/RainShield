@@ -2,10 +2,11 @@ package com.mrbysco.rainshield.util;
 
 import com.mrbysco.rainshield.RainShield;
 import com.mrbysco.rainshield.block.RainShieldBlock;
-import com.mrbysco.rainshield.client.RainShieldConfig;
+import com.mrbysco.rainshield.config.RainShieldConfig;
 import com.mrbysco.rainshield.handler.SyncHandler;
 import com.mrbysco.rainshield.network.payloads.SyncShieldMapPayload;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
@@ -72,7 +73,7 @@ public class RainShieldData extends SavedData {
 					if (!level.isAreaLoaded(shieldPos, 1)) continue;
 
 					double distance = pos.distManhattan(shieldPos);
-					if (distance <= RainShieldConfig.COMMON.rainShieldDistance.get()) {
+					if (distance <= RainShieldConfig.CLIENT.rainShieldDistance.get()) {
 						BlockState state = level.getBlockState(shieldPos);
 						if (state.getBlock() instanceof RainShieldBlock && !state.getValue(RainShieldBlock.POWERED)) {
 							return true;
@@ -85,8 +86,8 @@ public class RainShieldData extends SavedData {
 		return false;
 	}
 
-	public static RainShieldData load(CompoundTag tag) {
-		PacketDistributor.ALL.noArg().send(new SyncShieldMapPayload(tag));
+	public static RainShieldData load(CompoundTag tag, HolderLookup.Provider registries) {
+		PacketDistributor.sendToAllPlayers(new SyncShieldMapPayload(tag));
 
 		ListTag rainShieldMap = tag.getList("RainShieldMap", CompoundTag.TAG_COMPOUND);
 		Map<ResourceLocation, List<BlockPos>> shieldMap = new HashMap<>();
@@ -110,7 +111,7 @@ public class RainShieldData extends SavedData {
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag tag) {
+	public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
 		ListTag rainShieldList = new ListTag();
 		for (Map.Entry<ResourceLocation, List<BlockPos>> entry : rainShieldMap.entrySet()) {
 			CompoundTag shieldTag = new CompoundTag();
