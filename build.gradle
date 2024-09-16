@@ -145,6 +145,8 @@ if (System.getenv().CURSEFORGE_KEY) {
 
         mainFile.changelog = file("$project.rootDir/changelog.md")
         mainFile.changelogType = 'markdown'
+
+        mainFile.addOptional("simple-weather")
     }
 }
 
