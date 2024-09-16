@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "compatibilityLevel": "JAVA_21",
+  "package": "com.mrbysco.rainshield.compat.mixin",
+  "plugin": "com.mrbysco.rainshield.compat.ConfigPlugin",
+  "target": "@env(DEFAULT)",
+  "client": [
+    "SimpleWeatherMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -14,6 +14,7 @@ public class RainShieldRegistry {
 	public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(RainShield.MOD_ID);
 	public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(RainShield.MOD_ID);
 
+	@SuppressWarnings("deprecation")
 	public static final DeferredBlock<RainShieldBlock> RAIN_SHIELD = BLOCKS.register("rain_shield", () ->
 			new RainShieldBlock(Block.Properties.of().mapColor(MapColor.NONE).noCollission().strength(0.8F)
 					.forceSolidOff().instabreak().sound(SoundType.METAL).noOcclusion()));
