@@ -1,0 +1,1 @@
+* Fix cull not being enabled while rain is being canceled
