@@ -1,1 +1,1 @@
-* Add support for [Simple Weather](https://www.curseforge.com/minecraft/mc-mods/simple-weather)
+* Update to 1.21.5
