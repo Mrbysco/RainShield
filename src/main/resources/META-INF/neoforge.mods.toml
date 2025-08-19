@@ -26,5 +26,3 @@ ordering="NONE"
 side="BOTH"
 [[mixins]]
 config="rainshield.mixins.json"
-[[mixins]]
-config="rainshield.compat.mixins.json"

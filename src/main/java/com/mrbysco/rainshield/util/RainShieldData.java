@@ -5,6 +5,7 @@ import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrbysco.rainshield.RainShield;
 import com.mrbysco.rainshield.block.RainShieldBlock;
+import com.mrbysco.rainshield.compat.SimpleWeatherCompat;
 import com.mrbysco.rainshield.config.RainShieldConfig;
 import com.mrbysco.rainshield.handler.SyncHandler;
 import net.minecraft.core.BlockPos;
@@ -19,6 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
 import net.minecraft.world.level.storage.DimensionDataStorage;
+import net.neoforged.fml.ModList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,25 +57,36 @@ public class RainShieldData extends SavedData {
 
 		rainShieldMap.put(dimension, blockPositions);
 
-		if (!level.isClientSide) {
-			RainShieldData data = get(level);
+		if (level instanceof ServerLevel serverLevel) {
+			RainShieldData data = get(serverLevel);
 			data.setDirty();
-			((ServerLevel) level).players().forEach(SyncHandler::syncShieldMap);
+			serverLevel.players().forEach(SyncHandler::syncShieldMap);
+			if (ModList.get().isLoaded("simple_weather")) {
+				SimpleWeatherCompat.onAddition(serverLevel, pos);
+			}
 		}
 	}
 
 	public static void removeRainShieldPos(BlockPos pos, Level level) {
 		ResourceKey<Level> dimension = level.dimension();
 		List<BlockPos> blockPositions = new ArrayList<>(rainShieldMap.getOrDefault(dimension, new ArrayList<>()));
+		boolean changed = false;
 
 		if (!blockPositions.isEmpty()) {
 			boolean removed = blockPositions.removeIf(position -> position.equals(pos));
 			if (removed) {
 				rainShieldMap.put(dimension, blockPositions);
-				if (!level.isClientSide) {
-					RainShieldData data = get(level);
-					data.setDirty();
-				}
+				changed = true;
+			}
+		}
+
+		if (level instanceof ServerLevel serverLevel) {
+			if (changed) {
+				RainShieldData data = get(level);
+				data.setDirty();
+			}
+			if (ModList.get().isLoaded("simple_weather")) {
+				SimpleWeatherCompat.onRemoval(serverLevel, pos);
 			}
 		}
 	}

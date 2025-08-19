@@ -92,8 +92,9 @@ dependencies {
 
     localRuntime "mezz.jei:jei-${jei_minecraft}-neoforge:${jei_version}"
 
-    compileOnly "curse.maven:simple-weather-983390:6373262"
-    localRuntime "curse.maven:simple-weather-983390:6373262"
+    compileOnly "curse.maven:simple-weather-983390:6842087"
+    localRuntime "curse.maven:simple-weather-983390:6842087"
+    implementation "tv.soaryn:volumetrics:${volumetrics_version}"
 }
 
 jar {
