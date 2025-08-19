@@ -1,6 +1,7 @@
 package com.mrbysco.rainshield.block;
 
 import com.mojang.serialization.MapCodec;
+import com.mrbysco.rainshield.RainShield;
 import com.mrbysco.rainshield.util.RainShieldData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -11,6 +12,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
@@ -64,11 +66,10 @@ public class RainShieldBlock extends RodBlock implements SimpleWaterloggedBlock 
 	}
 
 	@Override
-	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-		if (!state.is(newState.getBlock())) {
-			RainShieldData.removeRainShieldPos(pos, level);
-
-			super.onRemove(state, level, pos, newState, isMoving);
+	public void destroy(LevelAccessor level, BlockPos pos, BlockState state) {
+		super.destroy(level, pos, state);
+		if (level instanceof Level actualLevel) {
+			RainShieldData.removeRainShieldPos(pos, actualLevel);
 		}
 	}
 

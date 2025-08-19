@@ -6,8 +6,6 @@ import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ModelProvider;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
-import net.minecraft.client.data.models.blockstates.Variant;
-import net.minecraft.client.data.models.blockstates.VariantProperties;
 import net.minecraft.client.data.models.model.ModelTemplate;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
@@ -173,9 +171,9 @@ public class RainShieldDataGen {
 
 			blockModels.blockStateOutput
 					.accept(
-							MultiVariantGenerator.multiVariant(deferredBlock.get(),
-											Variant.variant().with(VariantProperties.MODEL, model))
-									.with(blockModels.createColumnWithFacing())
+							MultiVariantGenerator.dispatch(deferredBlock.get(),
+											BlockModelGenerators.plainVariant(model))
+									.with(BlockModelGenerators.ROTATIONS_COLUMN_WITH_FACING)
 					);
 		}
 	}

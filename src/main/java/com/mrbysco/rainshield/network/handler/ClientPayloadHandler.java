@@ -3,16 +3,17 @@ package com.mrbysco.rainshield.network.handler;
 import com.mrbysco.rainshield.network.payloads.SyncShieldMapPayload;
 import com.mrbysco.rainshield.util.RainShieldData;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class ClientPayloadHandler {
 	private static final ClientPayloadHandler INSTANCE = new ClientPayloadHandler();
@@ -23,26 +24,14 @@ public class ClientPayloadHandler {
 
 	public void handleData(final SyncShieldMapPayload payload, final IPayloadContext context) {
 		context.enqueueWork(() -> {
-					ListTag rainShieldMap = payload.shieldMapTag().getList("RainShieldMap", CompoundTag.TAG_COMPOUND);
-					Map<ResourceLocation, List<BlockPos>> shieldMap = new HashMap<>();
-
-					for (int i = 0; i < rainShieldMap.size(); ++i) {
-						CompoundTag listTag = rainShieldMap.getCompound(i);
-						String dimension = listTag.getString("Dimension");
-						ResourceLocation dimensionLocation = ResourceLocation.tryParse(dimension);
-
-						List<BlockPos> blockPositionsList = new ArrayList<>();
-						ListTag blockPositions = listTag.getList("BlockPositions", ListTag.TAG_COMPOUND);
-						for (int j = 0; j < blockPositions.size(); ++j) {
-							CompoundTag blockPosTag = blockPositions.getCompound(j);
-							BlockPos pos = BlockPos.of(blockPosTag.getLong("BlockPos"));
-							blockPositionsList.add(pos);
-						}
-						shieldMap.put(dimensionLocation, blockPositionsList);
+					RegistryOps<Tag> nbtOps = context.player().registryAccess().createSerializationContext(NbtOps.INSTANCE);
+					Optional<Map<ResourceKey<Level>, List<BlockPos>>> optionalMap = payload.shieldMapTag().read("RainShieldMap", RainShieldData.MAP_CODEC, nbtOps);
+					if (optionalMap.isPresent()) {
+						RainShieldData.rainShieldMap.clear();
+						RainShieldData.rainShieldMap.putAll(optionalMap.get());
+					} else {
+						context.disconnect(Component.translatable("rainshield.networking.sync_shields.failed", "Invalid data format"));
 					}
-
-					RainShieldData.rainShieldMap.clear();
-					RainShieldData.rainShieldMap.putAll(shieldMap);
 				})
 				.exceptionally(e -> {
 					// Handle exception
