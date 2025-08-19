@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(targets = "tv.soaryn.simpleweather.SimpleWeather$NeoBus", remap = false)
+@Mixin(targets = "tv.soaryn.simpleweather.SimpleWeather$GameBus", remap = false)
 public interface SimpleWeatherMixin {
 	@Inject(remap = false,
 			at = @At("HEAD"),

@@ -1,9 +1,17 @@
 package com.mrbysco.rainshield.datagen;
 
 import com.mrbysco.rainshield.RainShield;
-import com.mrbysco.rainshield.block.RainShieldBlock;
 import com.mrbysco.rainshield.registry.RainShieldRegistry;
-import net.minecraft.core.Direction;
+import net.minecraft.client.data.models.BlockModelGenerators;
+import net.minecraft.client.data.models.ItemModelGenerators;
+import net.minecraft.client.data.models.ModelProvider;
+import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
+import net.minecraft.client.data.models.blockstates.Variant;
+import net.minecraft.client.data.models.blockstates.VariantProperties;
+import net.minecraft.client.data.models.model.ModelTemplate;
+import net.minecraft.client.data.models.model.ModelTemplates;
+import net.minecraft.client.data.models.model.TextureMapping;
+import net.minecraft.client.data.models.model.TextureSlot;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.WritableRegistry;
 import net.minecraft.data.DataGenerator;
@@ -13,27 +21,21 @@ import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.model.generators.BlockModelProvider;
-import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
@@ -42,22 +44,17 @@ import java.util.concurrent.CompletableFuture;
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class RainShieldDataGen {
 	@SubscribeEvent
-	public static void gatherData(GatherDataEvent event) {
+	public static void gatherData(GatherDataEvent.Client event) {
 		DataGenerator generator = event.getGenerator();
 		PackOutput packOutput = generator.getPackOutput();
-		ExistingFileHelper helper = event.getExistingFileHelper();
 		CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
-		if (event.includeServer()) {
-			generator.addProvider(event.includeServer(), new Loots(packOutput, lookupProvider));
-			generator.addProvider(event.includeServer(), new Recipes(packOutput, lookupProvider));
-		}
-		if (event.includeClient()) {
-			generator.addProvider(event.includeClient(), new Language(packOutput));
-			generator.addProvider(event.includeClient(), new BlockModels(packOutput, helper));
-			generator.addProvider(event.includeClient(), new ItemModels(packOutput, helper));
-			generator.addProvider(event.includeClient(), new BlockStates(packOutput, helper));
-		}
+		generator.addProvider(true, new Loots(packOutput, lookupProvider));
+		generator.addProvider(true, new Recipes.Runner(packOutput, lookupProvider));
+
+		generator.addProvider(true, new Language(packOutput));
+		generator.addProvider(true, new Models(packOutput));
+
 	}
 
 	private static class Loots extends LootTableProvider {
@@ -96,18 +93,34 @@ public class RainShieldDataGen {
 	}
 
 	public static class Recipes extends RecipeProvider {
-		public Recipes(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
-			super(packOutput, lookupProvider);
+		public Recipes(HolderLookup.Provider provider, RecipeOutput recipeOutput) {
+			super(provider, recipeOutput);
 		}
 
 		@Override
-		protected void buildRecipes(RecipeOutput output) {
-			ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, RainShieldRegistry.RAIN_SHIELD.get())
+		protected void buildRecipes() {
+			shaped(RecipeCategory.REDSTONE, RainShieldRegistry.RAIN_SHIELD.get())
 					.define('F', Items.FLINT)
 					.define('B', Tags.Items.RODS_BLAZE)
 					.define('N', Tags.Items.NETHERRACKS)
 					.pattern(" F ").pattern(" B ").pattern("NNN").unlockedBy("has_blaze_rod",
 							has(Tags.Items.RODS_BLAZE)).save(output);
+		}
+
+		public static class Runner extends RecipeProvider.Runner {
+			public Runner(PackOutput output, CompletableFuture<HolderLookup.Provider> completableFuture) {
+				super(output, completableFuture);
+			}
+
+			@Override
+			protected RecipeProvider createRecipeProvider(HolderLookup.Provider provider, RecipeOutput recipeOutput) {
+				return new Recipes(provider, recipeOutput);
+			}
+
+			@Override
+			public String getName() {
+				return "Rain Shield Recipes";
+			}
 		}
 	}
 
@@ -121,63 +134,49 @@ public class RainShieldDataGen {
 			addBlock(RainShieldRegistry.RAIN_SHIELD, "Rain Shield");
 
 			add("rainshield.networking.sync_shields.failed", "Failed to sync rain shield data: %s");
+
+			addConfig("client", "Client", "Client Settings");
+			addConfig("rainShieldDistance", "Rain Shield Distance", "Defines the range in which the Rain Shield stops rendering rain");
+		}
+
+		/**
+		 * Add the translation for a config entry
+		 *
+		 * @param path        The path of the config entry
+		 * @param name        The name of the config entry
+		 * @param description The description of the config entry (optional in case of targeting "title" or similar entries that have no tooltip)
+		 */
+		private void addConfig(String path, String name, @Nullable String description) {
+			this.add(RainShield.MOD_ID + ".configuration." + path, name);
+			if (description != null && !description.isEmpty())
+				this.add(RainShield.MOD_ID + ".configuration." + path + ".tooltip", description);
 		}
 	}
 
-	private static class BlockStates extends BlockStateProvider {
-		public BlockStates(PackOutput packOutput, ExistingFileHelper helper) {
-			super(packOutput, RainShield.MOD_ID, helper);
+	private static class Models extends ModelProvider {
+		public static final TextureSlot ROD_SLOT = TextureSlot.create("rod");
+		public static final ModelTemplate ROD = ModelTemplates.create("rainshield:rod", ROD_SLOT);
+
+		public Models(PackOutput packOutput) {
+			super(packOutput, RainShield.MOD_ID);
 		}
 
 		@Override
-		protected void registerStatesAndModels() {
-			makeRod(RainShieldRegistry.RAIN_SHIELD);
+		protected void registerModels(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+			makeRod(blockModels, RainShieldRegistry.RAIN_SHIELD);
 		}
 
-		private void makeRod(DeferredBlock<RainShieldBlock> deferredBlock) {
-			ModelFile model = models().getExistingFile(modLoc("block/" + deferredBlock.getId().getPath()));
-			getVariantBuilder(deferredBlock.get())
-					.partialState().with(BlockStateProperties.FACING, Direction.DOWN)
-					.modelForState().modelFile(model).rotationX(180).addModel()
-					.partialState().with(BlockStateProperties.FACING, Direction.EAST)
-					.modelForState().modelFile(model).rotationX(90).rotationY(90).addModel()
-					.partialState().with(BlockStateProperties.FACING, Direction.NORTH)
-					.modelForState().modelFile(model).rotationX(90).addModel()
-					.partialState().with(BlockStateProperties.FACING, Direction.SOUTH)
-					.modelForState().modelFile(model).rotationX(90).rotationY(180).addModel()
-					.partialState().with(BlockStateProperties.FACING, Direction.UP)
-					.modelForState().modelFile(model).addModel()
-					.partialState().with(BlockStateProperties.FACING, Direction.WEST)
-					.modelForState().modelFile(model).rotationX(90).rotationY(270).addModel();
-		}
-	}
+		private void makeRod(BlockModelGenerators blockModels, DeferredBlock<? extends Block> deferredBlock) {
+			ResourceLocation model = ROD.create(deferredBlock.get(),
+					TextureMapping.singleSlot(ROD_SLOT, deferredBlock.getId().withPrefix("block/")),
+					blockModels.modelOutput);
 
-	private static class BlockModels extends BlockModelProvider {
-		public BlockModels(PackOutput packOutput, ExistingFileHelper helper) {
-			super(packOutput, RainShield.MOD_ID, helper);
-		}
-
-		@Override
-		protected void registerModels() {
-			makeRod(RainShieldRegistry.RAIN_SHIELD.getId());
-		}
-
-		private void makeRod(ResourceLocation location) {
-			withExistingParent(location.getPath(), modLoc("block/rod"))
-					.texture("particle", "block/" + location.getPath())
-					.texture("rod", "block/" + location.getPath());
-		}
-	}
-
-	private static class ItemModels extends ItemModelProvider {
-		public ItemModels(PackOutput packOutput, ExistingFileHelper helper) {
-			super(packOutput, RainShield.MOD_ID, helper);
-		}
-
-		@Override
-		protected void registerModels() {
-			ResourceLocation location = RainShieldRegistry.RAIN_SHIELD_ITEM.getId();
-			withExistingParent(location.getPath(), modLoc("block/" + location.getPath()));
+			blockModels.blockStateOutput
+					.accept(
+							MultiVariantGenerator.multiVariant(deferredBlock.get(),
+											Variant.variant().with(VariantProperties.MODEL, model))
+									.with(blockModels.createColumnWithFacing())
+					);
 		}
 	}
 }

@@ -2,9 +2,8 @@
 	"parent": "block/block",
 	"ambientocclusion": false,
 	"textures": {
-		"particle": "block/end_rod",
-		"rod": "block/end_rod"
-	},
+        "particle": "#rod"
+    },
 	"elements": [
 		{
 			"from": [6, 0, 6],

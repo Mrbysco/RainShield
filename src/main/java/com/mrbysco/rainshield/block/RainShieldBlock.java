@@ -11,7 +11,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RodBlock;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
@@ -21,6 +22,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.redstone.Orientation;
 import org.jetbrains.annotations.Nullable;
 
 public class RainShieldBlock extends RodBlock implements SimpleWaterloggedBlock {
@@ -70,7 +72,8 @@ public class RainShieldBlock extends RodBlock implements SimpleWaterloggedBlock 
 		}
 	}
 
-	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+	@Override
+	protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, @Nullable Orientation orientation, boolean movedByPiston) {
 		if (!level.isClientSide) {
 			boolean flag = state.getValue(POWERED);
 			if (flag != level.hasNeighborSignal(pos)) {
@@ -83,30 +86,35 @@ public class RainShieldBlock extends RodBlock implements SimpleWaterloggedBlock 
 		}
 	}
 
+	@Override
 	public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
 		if (state.getValue(POWERED) && !level.hasNeighborSignal(pos)) {
 			level.setBlock(pos, state.cycle(POWERED), 2);
 		}
 	}
 
+	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext placeContext) {
 		FluidState fluidstate = placeContext.getLevel().getFluidState(placeContext.getClickedPos());
 		boolean flag = fluidstate.getType() == Fluids.WATER;
 		return this.defaultBlockState().setValue(FACING, placeContext.getClickedFace()).setValue(WATERLOGGED, Boolean.valueOf(flag));
 	}
 
-	public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
+	@Override
+	protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
 		if (state.getValue(WATERLOGGED)) {
-			level.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+			scheduledTickAccess.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
 		}
 
-		return super.updateShape(state, facing, facingState, level, currentPos, facingPos);
+		return super.updateShape(state, level, scheduledTickAccess, pos, direction, neighborPos, neighborState, random);
 	}
 
+	@Override
 	public FluidState getFluidState(BlockState state) {
 		return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
 	}
 
+	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> blockStateBuilder) {
 		blockStateBuilder.add(FACING, POWERED, WATERLOGGED);
 	}

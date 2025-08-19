@@ -1,4 +1,8 @@
 {
   "block.rainshield.rain_shield": "Rain Shield",
+  "rainshield.configuration.client": "Client",
+  "rainshield.configuration.client.tooltip": "Client Settings",
+  "rainshield.configuration.rainShieldDistance": "Rain Shield Distance",
+  "rainshield.configuration.rainShieldDistance.tooltip": "Defines the range in which the Rain Shield stops rendering rain",
   "rainshield.networking.sync_shields.failed": "Failed to sync rain shield data: %s"
 }

@@ -5,7 +5,7 @@
   "package": "com.mrbysco.rainshield.mixin",
   "target": "@env(DEFAULT)",
   "client": [
-    "LevelRendererMixin"
+    "WeatherEffectRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-    "B": {
-      "tag": "c:rods/blaze"
-    },
-    "F": {
-      "item": "minecraft:flint"
-    },
-    "N": {
-      "tag": "c:netherracks"
-    }
+    "B": "#c:rods/blaze",
+    "F": "minecraft:flint",
+    "N": "#c:netherracks"
   },
   "pattern": [
     " F ",

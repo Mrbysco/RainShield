@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "rainshield:block/rain_shield"
+  }
+}

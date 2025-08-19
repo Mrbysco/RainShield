@@ -13,8 +13,8 @@ public class RainShieldConfig {
 		public final IntValue rainShieldDistance;
 
 		Client(ModConfigSpec.Builder builder) {
-			builder.comment("General settings")
-					.push("General");
+			builder.comment("Client settings")
+					.push("client");
 
 			// Enable/Disable
 			rainShieldDistance = builder
