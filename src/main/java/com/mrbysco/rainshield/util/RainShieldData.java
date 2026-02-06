@@ -4,9 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrbysco.rainshield.RainShield;
-import com.mrbysco.rainshield.block.RainShieldBlock;
 import com.mrbysco.rainshield.compat.SimpleWeatherCompat;
-import com.mrbysco.rainshield.config.RainShieldConfig;
 import com.mrbysco.rainshield.handler.SyncHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -16,7 +14,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
 import net.minecraft.world.level.storage.DimensionDataStorage;
@@ -89,28 +86,6 @@ public class RainShieldData extends SavedData {
 				SimpleWeatherCompat.onRemoval(serverLevel, pos);
 			}
 		}
-	}
-
-	public static boolean cancelRain(Level level, BlockPos pos) {
-		if (level != null) {
-			ResourceKey<Level> dimension = level.dimension();
-			if (rainShieldMap.containsKey(dimension)) {
-				List<BlockPos> blockPositions = new ArrayList<>(rainShieldMap.getOrDefault(dimension, new ArrayList<>()));
-				for (BlockPos shieldPos : blockPositions) {
-					if (!level.isAreaLoaded(shieldPos, 1)) continue;
-
-					double distance = pos.distManhattan(shieldPos);
-					if (distance <= RainShieldConfig.CLIENT.rainShieldDistance.get()) {
-						BlockState state = level.getBlockState(shieldPos);
-						if (state.getBlock() instanceof RainShieldBlock && !state.getValue(RainShieldBlock.POWERED)) {
-							return true;
-						}
-					}
-				}
-			}
-		}
-
-		return false;
 	}
 
 	public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {

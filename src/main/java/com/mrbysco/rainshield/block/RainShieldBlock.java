@@ -75,7 +75,7 @@ public class RainShieldBlock extends RodBlock implements SimpleWaterloggedBlock 
 
 	@Override
 	protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, @Nullable Orientation orientation, boolean movedByPiston) {
-		if (!level.isClientSide) {
+		if (!level.isClientSide()) {
 			boolean flag = state.getValue(POWERED);
 			if (flag != level.hasNeighborSignal(pos)) {
 				if (flag) {

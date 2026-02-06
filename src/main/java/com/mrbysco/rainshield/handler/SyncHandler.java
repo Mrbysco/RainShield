@@ -13,22 +13,21 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEve
 public class SyncHandler {
 	@SubscribeEvent
 	public void onLogin(PlayerLoggedInEvent event) {
-		Player player = event.getEntity();
-		if (!player.level().isClientSide) {
-			syncShieldMap((ServerPlayer) player);
+		if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+			syncShieldMap(serverPlayer);
 		}
 	}
 
 	@SubscribeEvent
 	public void onLogin(PlayerLoggedOutEvent event) {
 		Player player = event.getEntity();
-		if (player.level().isClientSide) {
+		if (player.level().isClientSide()) {
 			RainShieldData.rainShieldMap.clear();
 		}
 	}
 
 	public static void syncShieldMap(ServerPlayer player) {
-		RainShieldData rainShieldData = RainShieldData.get(player.getServer().getLevel(Level.OVERWORLD));
+		RainShieldData rainShieldData = RainShieldData.get(player.level().getServer().getLevel(Level.OVERWORLD));
 		CompoundTag tag = rainShieldData.save(new CompoundTag(), player.registryAccess());
 		player.connection.send(new SyncShieldMapPayload(tag));
 	}

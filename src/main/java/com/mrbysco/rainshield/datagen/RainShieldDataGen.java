@@ -19,7 +19,7 @@ import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Items;
@@ -165,7 +165,7 @@ public class RainShieldDataGen {
 		}
 
 		private void makeRod(BlockModelGenerators blockModels, DeferredBlock<? extends Block> deferredBlock) {
-			ResourceLocation model = ROD.create(deferredBlock.get(),
+			Identifier model = ROD.create(deferredBlock.get(),
 					TextureMapping.singleSlot(ROD_SLOT, deferredBlock.getId().withPrefix("block/")),
 					blockModels.modelOutput);
 

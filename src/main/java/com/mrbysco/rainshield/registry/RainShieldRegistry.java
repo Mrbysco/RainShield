@@ -16,7 +16,7 @@ public class RainShieldRegistry {
 
 	@SuppressWarnings("deprecation")
 	public static final DeferredBlock<RainShieldBlock> RAIN_SHIELD = BLOCKS.registerBlock("rain_shield",
-			RainShieldBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.NONE).noCollission().strength(0.8F)
+			RainShieldBlock::new, () -> BlockBehaviour.Properties.of().mapColor(MapColor.NONE).noCollision().strength(0.8F)
 					.forceSolidOff().instabreak().sound(SoundType.METAL).noOcclusion());
 
 	public static final DeferredItem<BlockItem> RAIN_SHIELD_ITEM = ITEMS.registerSimpleBlockItem(RAIN_SHIELD);
