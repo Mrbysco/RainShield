@@ -10,8 +10,8 @@ import net.minecraft.client.data.models.model.ModelTemplate;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.WritableRegistry;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.BlockLootSubProvider;
@@ -20,12 +20,9 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -81,12 +78,6 @@ public class RainShieldDataGen {
 			protected Iterable<Block> getKnownBlocks() {
 				return (Iterable<Block>) RainShieldRegistry.BLOCKS.getEntries().stream().map(holder -> (Block) holder.get())::iterator;
 			}
-		}
-
-		@Override
-		protected void validate(WritableRegistry<LootTable> writableRegistry, ValidationContext context,
-		                        ProblemReporter.Collector reporter) {
-			super.validate(writableRegistry, context, reporter);
 		}
 	}
 
@@ -166,7 +157,7 @@ public class RainShieldDataGen {
 
 		private void makeRod(BlockModelGenerators blockModels, DeferredBlock<? extends Block> deferredBlock) {
 			Identifier model = ROD.create(deferredBlock.get(),
-					TextureMapping.singleSlot(ROD_SLOT, deferredBlock.getId().withPrefix("block/")),
+					TextureMapping.singleSlot(ROD_SLOT, new Material(deferredBlock.getId().withPrefix("block/"))),
 					blockModels.modelOutput);
 
 			blockModels.blockStateOutput

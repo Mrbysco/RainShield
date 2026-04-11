@@ -11,12 +11,13 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
-import net.minecraft.world.level.storage.DimensionDataStorage;
+import net.minecraft.world.level.storage.SavedDataStorage;
 import net.neoforged.fml.ModList;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 public class RainShieldData extends SavedData {
-	private static final String DATA_NAME = RainShield.MOD_ID + "_world_data";
+	private static final Identifier DATA_NAME = Identifier.fromNamespaceAndPath(RainShield.MOD_ID, "rain_shield_data");
 
 	public static final Codec<Map<ResourceKey<Level>, List<BlockPos>>> MAP_CODEC = Codec.unboundedMap(
 			Level.RESOURCE_KEY_CODEC, BlockPos.CODEC.listOf()
@@ -104,7 +105,7 @@ public class RainShieldData extends SavedData {
 		}
 		ServerLevel overworld = level.getServer().getLevel(Level.OVERWORLD);
 
-		DimensionDataStorage storage = overworld.getDataStorage();
+		SavedDataStorage storage = overworld.getDataStorage();
 		return storage.computeIfAbsent(type());
 	}
 }
