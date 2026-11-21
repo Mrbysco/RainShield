@@ -1,0 +1,4 @@
+// 26.3	2026-11-21T21:43:04.9134199	Registries for Reloadable (rainshield[0]): [rainshield]
+e63b76718ac093a7dbc6749b9f010f35db6ca8fe data/rainshield/advancement/recipes/redstone/rain_shield.json
+b14a857430aa96d1ea92b97f43018a7b0d448ae7 data/rainshield/loot_table/blocks/rain_shield.json
+2b28be28fbe2ef189435a34c5a95d7a3c95ae619 data/rainshield/recipe/rain_shield.json
